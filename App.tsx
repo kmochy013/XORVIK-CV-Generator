@@ -331,7 +331,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-2">
            <div className="flex items-center gap-2 text-slate-600 font-medium">
               <span>Built with</span>
-              <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
+              <Heart className="w-4 h-4 animate-heartbeat" />
               <span>by <span className="text-indigo-600 font-bold">Kamrul Engineering</span></span>
            </div>
            <p className="text-slate-400 text-xs">Empowering careers with AI-driven resumes.</p>
