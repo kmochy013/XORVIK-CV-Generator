@@ -57,6 +57,7 @@ export interface CVData {
   skills: Skill[];
   languages: Language[];
   custom: CustomSection[];
+  themeColor: string;
 }
 
 export enum GeneratorAction {

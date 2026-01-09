@@ -8,7 +8,7 @@ import { CustomSectionEditor } from './components/Editor/CustomSectionEditor';
 import { CVPreview } from './components/Preview/CVPreview';
 import { Button } from './components/ui/Button';
 import { Modal } from './components/ui/Modal';
-import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, AlertCircle } from 'lucide-react';
+import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, AlertCircle, Palette } from 'lucide-react';
 import { Input } from './components/ui/Input';
 
 const INITIAL_DATA: CVData = {
@@ -64,8 +64,19 @@ const INITIAL_DATA: CVData = {
     { id: '1', name: 'English', proficiency: 'Native' },
     { id: '2', name: 'Spanish', proficiency: 'Intermediate' }
   ],
-  custom: []
+  custom: [],
+  themeColor: '#4f46e5'
 };
+
+const THEME_COLORS = [
+  { name: 'Indigo', value: '#4f46e5' },
+  { name: 'Slate', value: '#475569' },
+  { name: 'Blue', value: '#2563eb' },
+  { name: 'Emerald', value: '#059669' },
+  { name: 'Rose', value: '#e11d48' },
+  { name: 'Violet', value: '#7c3aed' },
+  { name: 'Orange', value: '#ea580c' },
+];
 
 function App() {
   const [data, setData] = useState<CVData>(INITIAL_DATA);
@@ -177,6 +188,35 @@ function App() {
                      <span className={`font-semibold text-xs ${template === 'classic' ? 'text-indigo-900' : 'text-slate-700'}`}>Timeline</span>
                   </button>
                </div>
+            </div>
+
+            {/* Theme Color Picker */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-4">
+                <Palette className="w-5 h-5 text-indigo-500" />
+                Theme Color
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {THEME_COLORS.map((color) => (
+                   <button
+                     key={color.value}
+                     onClick={() => setData(prev => ({ ...prev, themeColor: color.value }))}
+                     className={`w-8 h-8 rounded-full border-2 transition-all ${data.themeColor === color.value ? 'border-slate-800 scale-110' : 'border-transparent hover:scale-110'}`}
+                     style={{ backgroundColor: color.value }}
+                     title={color.name}
+                   />
+                ))}
+                <div className="relative group">
+                    <input 
+                        type="color"
+                        value={data.themeColor}
+                        onChange={(e) => setData(prev => ({ ...prev, themeColor: e.target.value }))}
+                        className="absolute inset-0 w-8 h-8 opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center bg-white hover:bg-slate-50 transition-all group-hover:scale-110" style={{ background: `conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)` }}>
+                    </div>
+                </div>
+              </div>
             </div>
 
             <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex gap-3 items-start">

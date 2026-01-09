@@ -1,13 +1,14 @@
 import React from 'react';
 import { CVData } from '../../types';
 import { Mail, Phone, Globe, Linkedin, MapPin } from 'lucide-react';
+import { hexToRgba } from '../../utils/colors';
 
 interface TemplateProps {
   data: CVData;
 }
 
 export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
-  const { profile, experience, education, skills, languages, custom } = data;
+  const { profile, experience, education, skills, languages, custom, themeColor } = data;
 
   return (
     <div className="flex flex-row w-full h-full bg-white shadow-2xl print:shadow-none min-h-[1123px] max-w-[794px] mx-auto text-slate-800 print:w-full print:max-w-none overflow-hidden">
@@ -30,31 +31,31 @@ export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="flex flex-col gap-3 text-sm text-left">
                 {profile.email && (
                     <div className="flex items-center gap-2 break-all">
-                        <Mail className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                        <Mail className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                         <span className="text-slate-300 font-light">{profile.email}</span>
                     </div>
                 )}
                 {profile.phone && (
                     <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                        <Phone className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                         <span className="text-slate-300 font-light">{profile.phone}</span>
                     </div>
                 )}
                  {profile.location && (
                     <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                         <span className="text-slate-300 font-light">{profile.location}</span>
                     </div>
                 )}
                 {profile.website && (
                     <div className="flex items-center gap-2 break-all">
-                        <Globe className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                        <Globe className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                         <span className="text-slate-300 font-light">{profile.website}</span>
                     </div>
                 )}
                 {profile.linkedin && (
                     <div className="flex items-center gap-2 break-all">
-                        <Linkedin className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                        <Linkedin className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                         <span className="text-slate-300 font-light">{profile.linkedin}</span>
                     </div>
                 )}
@@ -103,13 +104,12 @@ export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
              <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 uppercase mb-2">
                 {profile.fullName || "Your Name"}
             </h1>
-            {/* We already showed location in sidebar, but maybe job title here? We don't have job title field specifically, using Summary for context */}
         </header>
 
          {/* Summary */}
         {profile.summary && (
             <section className="mb-8">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-600 mb-3">
+                <h2 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: themeColor }}>
                     Profile
                 </h2>
                 <p className="text-sm leading-relaxed text-slate-700">
@@ -121,9 +121,9 @@ export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
         {/* Experience */}
         {experience.length > 0 && (
             <section className="mb-8">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2">
+                <h2 className="text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2" style={{ color: themeColor }}>
                     Experience
-                    <span className="h-[1px] bg-indigo-100 flex-1 ml-2"></span>
+                    <span className="h-[1px] flex-1 ml-2" style={{ backgroundColor: hexToRgba(themeColor, 0.2) }}></span>
                 </h2>
                 <div className="space-y-6">
                     {experience.map(exp => (
@@ -149,9 +149,9 @@ export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
          {/* Education */}
         {education.length > 0 && (
             <section className="mb-8">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2">
+                <h2 className="text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2" style={{ color: themeColor }}>
                     Education
-                    <span className="h-[1px] bg-indigo-100 flex-1 ml-2"></span>
+                    <span className="h-[1px] flex-1 ml-2" style={{ backgroundColor: hexToRgba(themeColor, 0.2) }}></span>
                 </h2>
                 <div className="space-y-4">
                     {education.map(edu => (
@@ -164,7 +164,7 @@ export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                         <div className="text-sm text-slate-700">
                              {edu.degree} <span className="text-slate-400">|</span> {edu.field}
-                             {edu.score && <div className="text-indigo-600 text-xs font-semibold mt-0.5">{edu.score}</div>}
+                             {edu.score && <div className="text-xs font-semibold mt-0.5" style={{ color: themeColor }}>{edu.score}</div>}
                         </div>
                     </div>
                     ))}
@@ -175,9 +175,9 @@ export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
         {/* Custom Sections */}
         {custom && custom.map(section => (
           <section key={section.id} className="mb-8 last:mb-0">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-600 mb-4 flex items-center gap-2">
+              <h2 className="text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2" style={{ color: themeColor }}>
                   {section.title}
-                  <span className="h-[1px] bg-indigo-100 flex-1 ml-2"></span>
+                  <span className="h-[1px] flex-1 ml-2" style={{ backgroundColor: hexToRgba(themeColor, 0.2) }}></span>
               </h2>
               {section.type === 'list' ? (
                 <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1 pl-6">

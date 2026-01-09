@@ -1,49 +1,50 @@
 import React from 'react';
 import { CVData } from '../../types';
 import { Mail, Phone, Globe, Linkedin } from 'lucide-react';
+import { hexToRgba } from '../../utils/colors';
 
 interface TemplateProps {
   data: CVData;
 }
 
 export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
-  const { profile, experience, education, skills, languages, custom } = data;
+  const { profile, experience, education, skills, languages, custom, themeColor } = data;
 
   return (
     <div className="w-full h-full bg-white shadow-2xl print:shadow-none min-h-[1123px] max-w-[794px] mx-auto p-[40px] md:p-[50px] text-slate-800 print:w-full print:max-w-none">
       
       {/* Header */}
-      <header className="border-b-2 border-slate-800 pb-6 mb-6 flex justify-between items-start gap-6">
+      <header className="border-b-2 pb-6 mb-6 flex justify-between items-start gap-6" style={{ borderColor: themeColor }}>
         <div className="flex-1">
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 uppercase mb-2 break-words">
             {profile.fullName || "Your Name"}
           </h1>
           {profile.location && (
-              <div className="text-lg text-slate-500 font-medium mb-4">{profile.location}</div>
+              <div className="text-lg font-medium mb-4" style={{ color: themeColor }}>{profile.location}</div>
           )}
           
           <div className="flex flex-wrap gap-4 text-xs md:text-sm text-slate-600">
             {profile.email && (
               <div className="flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+                <Mail className="w-3.5 h-3.5 flex-shrink-0" style={{ color: themeColor }} />
                 <span className="break-all">{profile.email}</span>
               </div>
             )}
             {profile.phone && (
               <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 flex-shrink-0" />
+                <Phone className="w-3.5 h-3.5 flex-shrink-0" style={{ color: themeColor }} />
                 <span>{profile.phone}</span>
               </div>
             )}
             {profile.website && (
               <div className="flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 flex-shrink-0" />
+                <Globe className="w-3.5 h-3.5 flex-shrink-0" style={{ color: themeColor }} />
                 <span className="break-all">{profile.website}</span>
               </div>
             )}
             {profile.linkedin && (
                <div className="flex items-center gap-1.5">
-                <Linkedin className="w-3.5 h-3.5 flex-shrink-0" />
+                <Linkedin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: themeColor }} />
                 <span className="break-all">{profile.linkedin}</span>
               </div>
             )}
@@ -84,7 +85,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </span>
                 </div>
-                <div className="text-sm font-semibold text-indigo-700 mb-2">{exp.company}</div>
+                <div className="text-sm font-semibold mb-2" style={{ color: themeColor }}>{exp.company}</div>
                 <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
                   {exp.description}
                 </div>
@@ -128,7 +129,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
               </h2>
               <div className="flex flex-wrap gap-2">
                 {skills.map(skill => (
-                  <span key={skill.id} className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-medium">
+                  <span key={skill.id} className="text-slate-700 px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: hexToRgba(themeColor, 0.1) }}>
                     {skill.name}
                   </span>
                 ))}
