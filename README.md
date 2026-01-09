@@ -30,7 +30,7 @@
 
 ## 🛠️ Tech Stack
 
-*   **Frontend:** React 19, TypeScript, Vite (implied environment)
+*   **Frontend:** React 19, TypeScript, Vite
 *   **Styling:** Tailwind CSS
 *   **AI Integration:** Google GenAI SDK (`@google/genai`)
 *   **Icons:** Lucide React
@@ -50,8 +50,8 @@ Follow these steps to set up the project locally.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/xorvik-cv.git
-    cd xorvik-cv
+    git clone https://github.com/kmochy013/XORVIK-CV-Generator.git
+    cd XORVIK-CV-Generator
     ```
 
 2.  **Install dependencies:**
@@ -63,15 +63,14 @@ Follow these steps to set up the project locally.
     You need a valid Google Gemini API Key.
     
     *   Create a `.env` file in the root directory.
-    *   Add your API key:
+    *   Add your API key (Use `VITE_API_KEY` for Vite compatibility):
         ```env
-        API_KEY=your_google_gemini_api_key_here
+        VITE_API_KEY=your_google_gemini_api_key_here
         ```
+    *   *Note:* If deploying to **Vercel**, add `VITE_API_KEY` in the Project Settings > Environment Variables.
 
 4.  **Run the application:**
     ```bash
-    npm start
-    # or
     npm run dev
     ```
 

@@ -1,10 +1,43 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
+// Helper to safely access the API Key in various environments (Vite, Webpack, Node)
+const getApiKey = (): string => {
+  let key = '';
+
+  // 1. Try safe process.env access (Standard Node/Webpack/Vercel)
+  // We use try/catch because accessing 'process' in some browsers throws a ReferenceError
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      key = process.env.API_KEY;
+    }
+  } catch (e) {
+    // Ignore error if process is not defined
+  }
+
+  // 2. Try Vite's import.meta.env (Modern Client-side)
+  if (!key) {
+    try {
+      // @ts-ignore: Suppress TS error for import.meta in non-module contexts
+      if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+        // @ts-ignore
+        key = import.meta.env.VITE_API_KEY;
+      }
+    } catch (e) {
+      // Ignore error
+    }
+  }
+
+  return key;
+};
+
+const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey });
 
 export const generateProfessionalSummary = async (jobTitle: string, keySkills: string): Promise<string> => {
-  if (!apiKey) return "API Key missing. Please configure your environment.";
+  if (!apiKey) {
+    console.error("API Key is missing.");
+    return "API Key is missing. Please check your .env file or Vercel settings (VITE_API_KEY).";
+  }
 
   try {
     const prompt = `Write a professional, concise, and impactful CV summary (max 3 sentences) for a ${jobTitle}. 
@@ -19,12 +52,15 @@ export const generateProfessionalSummary = async (jobTitle: string, keySkills: s
     return response.text || "";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("Failed to generate summary.");
+    throw new Error("Failed to generate summary. Verify your API Key.");
   }
 };
 
 export const enhanceExperienceDescription = async (text: string, role: string): Promise<string> => {
-  if (!apiKey) return "API Key missing. Please configure your environment.";
+  if (!apiKey) {
+    console.error("API Key is missing.");
+    return "API Key is missing. Please check your .env file or Vercel settings (VITE_API_KEY).";
+  }
 
   try {
     const prompt = `Rewrite the following job description bullet points for a ${role} role to be more professional, action-oriented, and results-driven. 
@@ -41,6 +77,6 @@ export const enhanceExperienceDescription = async (text: string, role: string): 
     return response.text || "";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("Failed to enhance description.");
+    throw new Error("Failed to enhance description. Verify your API Key.");
   }
 };
