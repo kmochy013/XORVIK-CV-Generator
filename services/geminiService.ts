@@ -5,10 +5,13 @@ const getApiKey = (): string => {
   let key = '';
 
   // 1. Try safe process.env access (Standard Node/Webpack/Vercel)
-  // We use try/catch because accessing 'process' in some browsers throws a ReferenceError
   try {
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-      key = process.env.API_KEY;
+    if (typeof process !== 'undefined' && process.env) {
+      if (process.env.API_KEY) {
+        key = process.env.API_KEY;
+      } else if (process.env.VITE_API_KEY) {
+        key = process.env.VITE_API_KEY;
+      }
     }
   } catch (e) {
     // Ignore error if process is not defined
@@ -36,7 +39,7 @@ const ai = new GoogleGenAI({ apiKey });
 export const generateProfessionalSummary = async (jobTitle: string, keySkills: string): Promise<string> => {
   if (!apiKey) {
     console.error("API Key is missing.");
-    return "API Key is missing. Please check your .env file or Vercel settings (VITE_API_KEY).";
+    return "API Key is missing. Please check your .env file (or env.txt) and ensure VITE_API_KEY is set in Vercel.";
   }
 
   try {
@@ -59,7 +62,7 @@ export const generateProfessionalSummary = async (jobTitle: string, keySkills: s
 export const enhanceExperienceDescription = async (text: string, role: string): Promise<string> => {
   if (!apiKey) {
     console.error("API Key is missing.");
-    return "API Key is missing. Please check your .env file or Vercel settings (VITE_API_KEY).";
+    return "API Key is missing. Please check your .env file (or env.txt) and ensure VITE_API_KEY is set in Vercel.";
   }
 
   try {

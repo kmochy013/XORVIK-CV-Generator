@@ -62,12 +62,12 @@ Follow these steps to set up the project locally.
 3.  **Configure Environment:**
     You need a valid Google Gemini API Key.
     
-    *   Create a `.env` file in the root directory.
-    *   Add your API key (Use `VITE_API_KEY` for Vite compatibility):
-        ```env
+    *   Open the file `env.txt` (or create a `.env` file).
+    *   Copy the content and replace the placeholder with your key:
+        ```
         VITE_API_KEY=your_google_gemini_api_key_here
         ```
-    *   *Note:* If deploying to **Vercel**, add `VITE_API_KEY` in the Project Settings > Environment Variables.
+    *   If using **Vercel**, go to Settings > Environment Variables and paste the content there.
 
 4.  **Run the application:**
     ```bash
