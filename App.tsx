@@ -7,7 +7,7 @@ import { LanguageSection } from './components/Editor/LanguageSection';
 import { CustomSectionEditor } from './components/Editor/CustomSectionEditor';
 import { CVPreview } from './components/Preview/CVPreview';
 import { Button } from './components/ui/Button';
-import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, Palette, Download } from 'lucide-react';
+import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, Palette, Download, Heart } from 'lucide-react';
 import { Input } from './components/ui/Input';
 
 const INITIAL_DATA: CVData = {
@@ -133,7 +133,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col">
       
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
@@ -174,7 +174,7 @@ function App() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Editor Column */}
@@ -325,6 +325,18 @@ function App() {
 
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-slate-200 mt-12 py-8 print:hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-2">
+           <div className="flex items-center gap-2 text-slate-600 font-medium">
+              <span>Built with</span>
+              <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
+              <span>by <span className="text-indigo-600 font-bold">Kamrul Engineering</span></span>
+           </div>
+           <p className="text-slate-400 text-xs">Empowering careers with AI-driven resumes.</p>
+        </div>
+      </footer>
 
       {/* Hidden Render Container for HTML2PDF */}
       {/* Positioned off-screen but rendered to ensure html2canvas can capture it */}
