@@ -4,13 +4,18 @@ import { Mail, Phone, Globe, Linkedin, MapPin } from 'lucide-react';
 
 interface TemplateProps {
   data: CVData;
+  exportMode?: boolean;
 }
 
-export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
+export const ClassicTemplate: React.FC<TemplateProps> = ({ data, exportMode }) => {
   const { profile, experience, education, skills, languages, custom, themeColor } = data;
 
+  const containerClasses = exportMode
+  ? "w-[794px] min-h-[1123px] bg-white p-8"
+  : "w-full h-full bg-white shadow-2xl min-h-[1123px] max-w-[794px] mx-auto p-8";
+
   return (
-    <div className="w-full h-full bg-white shadow-2xl print:shadow-none min-h-[1123px] max-w-[794px] mx-auto p-8 text-slate-800 print:w-full print:max-w-none text-sm">
+    <div className={`${containerClasses} text-slate-800 text-sm`}>
       
       {/* Header */}
       <div className="flex gap-6 mb-8 border-b-2 pb-6 items-center" style={{ borderColor: themeColor }}>

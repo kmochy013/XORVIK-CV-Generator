@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CVData } from './types';
 import { ProfileSection } from './components/Editor/ProfileSection';
 import { ExperienceSection } from './components/Editor/ExperienceSection';
@@ -7,8 +7,7 @@ import { LanguageSection } from './components/Editor/LanguageSection';
 import { CustomSectionEditor } from './components/Editor/CustomSectionEditor';
 import { CVPreview } from './components/Preview/CVPreview';
 import { Button } from './components/ui/Button';
-import { Modal } from './components/ui/Modal';
-import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, AlertCircle, Palette } from 'lucide-react';
+import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, Palette, Download } from 'lucide-react';
 import { Input } from './components/ui/Input';
 
 const INITIAL_DATA: CVData = {
@@ -83,18 +82,37 @@ function App() {
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   const [template, setTemplate] = useState<'modern' | 'sidebar' | 'classic'>('modern');
   const [newSkill, setNewSkill] = useState('');
-  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrintRequest = () => {
-    setIsDownloadModalOpen(true);
-  };
+  const generatePDF = () => {
+    setIsDownloading(true);
+    const element = printRef.current;
+    
+    // Configure html2pdf options
+    const opt = {
+      margin: 0,
+      filename: `${data.profile.fullName.replace(/\s+/g, '_')}_CV.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-  const confirmPrint = () => {
-    setIsDownloadModalOpen(false);
-    // Slight delay to allow modal to close smoothly before print dialog intercepts focus
-    setTimeout(() => {
-      window.print();
-    }, 300);
+    // Use globally available html2pdf from CDN
+    // @ts-ignore
+    if (window.html2pdf) {
+       // @ts-ignore
+       window.html2pdf().set(opt).from(element).save().then(() => {
+         setIsDownloading(false);
+       }).catch((err: any) => {
+         console.error("PDF generation failed:", err);
+         setIsDownloading(false);
+         alert("Failed to generate PDF. Please try again.");
+       });
+    } else {
+      alert("PDF library not loaded. Please refresh the page.");
+      setIsDownloading(false);
+    }
   };
 
   const addSkill = (e: React.KeyboardEvent) => {
@@ -115,10 +133,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans print:bg-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       
-      {/* Navbar - Hidden on print */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 print:hidden">
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-200">
@@ -143,15 +161,20 @@ function App() {
                 </button>
              </div>
 
-            <Button onClick={handlePrintRequest} variant="primary" icon={<Printer className="w-4 h-4" />}>
-              Download PDF
+            <Button 
+              onClick={generatePDF} 
+              variant="primary" 
+              isLoading={isDownloading}
+              icon={<Download className="w-4 h-4" />}
+            >
+              {isDownloading ? 'Generating...' : 'Download PDF'}
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Main Content - Hidden on print */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:hidden">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Editor Column */}
@@ -295,7 +318,7 @@ function App() {
                 </div>
                 
                 <div className="mt-8 text-center text-xs text-slate-400">
-                   <p>Tip: Use Chrome's "Save as PDF" option in the print dialog for best results.</p>
+                   <p>Preview updates automatically as you type.</p>
                 </div>
              </div>
           </div>
@@ -303,42 +326,13 @@ function App() {
         </div>
       </main>
 
-      {/* DEDICATED PRINT VIEW */}
-      {/* This is the only thing visible during print. It bypasses all grid/responsive logic */}
-      <div className="hidden print:block print:w-full">
-         <CVPreview data={data} template={template} />
-      </div>
-
-      <Modal 
-        isOpen={isDownloadModalOpen} 
-        onClose={() => setIsDownloadModalOpen(false)}
-        title="Ready to Download?"
-      >
-        <div className="space-y-4">
-          <div className="flex items-start gap-4 p-4 bg-indigo-50 rounded-lg text-indigo-900 text-sm">
-             <AlertCircle className="w-5 h-5 flex-shrink-0 text-indigo-600 mt-0.5" />
-             <p>
-               Your CV is ready. When the print dialog opens, please ensure the destination is set to <strong>"Save as PDF"</strong>.
-             </p>
-          </div>
-          <div className="text-sm text-slate-600">
-             <p className="mb-2"><strong>Tip:</strong> For the best layout:</p>
-             <ul className="list-disc pl-5 space-y-1">
-               <li>Set margins to "None" or "Minimum"</li>
-               <li>Enable "Background graphics"</li>
-               <li>Set paper size to A4</li>
-             </ul>
-          </div>
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-            <Button variant="ghost" onClick={() => setIsDownloadModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={confirmPrint} icon={<Printer className="w-4 h-4" />}>
-              Proceed to Print
-            </Button>
-          </div>
+      {/* Hidden Render Container for HTML2PDF */}
+      {/* Positioned off-screen but rendered to ensure html2canvas can capture it */}
+      <div style={{ position: 'fixed', left: '-9999px', top: 0 }}>
+        <div ref={printRef} className="w-[794px]">
+             <CVPreview data={data} template={template} exportMode={true} />
         </div>
-      </Modal>
+      </div>
 
     </div>
   );

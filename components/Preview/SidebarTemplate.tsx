@@ -5,16 +5,21 @@ import { hexToRgba } from '../../utils/colors';
 
 interface TemplateProps {
   data: CVData;
+  exportMode?: boolean;
 }
 
-export const SidebarTemplate: React.FC<TemplateProps> = ({ data }) => {
+export const SidebarTemplate: React.FC<TemplateProps> = ({ data, exportMode }) => {
   const { profile, experience, education, skills, languages, custom, themeColor } = data;
 
+  const containerClasses = exportMode
+  ? "w-[794px] min-h-[1123px] bg-white flex flex-row overflow-hidden" 
+  : "w-full h-full bg-white shadow-2xl flex flex-row min-h-[1123px] max-w-[794px] mx-auto overflow-hidden";
+
   return (
-    <div className="flex flex-row w-full h-full bg-white shadow-2xl print:shadow-none min-h-[1123px] max-w-[794px] mx-auto text-slate-800 print:w-full print:max-w-none overflow-hidden">
+    <div className={`${containerClasses} text-slate-800`}>
       
       {/* Left Sidebar */}
-      <div className="w-[32%] bg-slate-900 text-slate-100 p-6 flex flex-col gap-8 print:bg-slate-900 print:text-white print:print-color-adjust-exact">
+      <div className="w-[32%] bg-slate-900 text-slate-100 p-6 flex flex-col gap-8">
         
         {/* Profile Image & Contact */}
         <div className="text-center">

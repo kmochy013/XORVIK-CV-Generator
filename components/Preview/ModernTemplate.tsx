@@ -5,13 +5,18 @@ import { hexToRgba } from '../../utils/colors';
 
 interface TemplateProps {
   data: CVData;
+  exportMode?: boolean;
 }
 
-export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
+export const ModernTemplate: React.FC<TemplateProps> = ({ data, exportMode }) => {
   const { profile, experience, education, skills, languages, custom, themeColor } = data;
 
+  const containerClasses = exportMode
+    ? "w-[794px] min-h-[1123px] bg-white p-[40px]" // Fixed width for A4 PDF generation, no shadow
+    : "w-full h-full bg-white shadow-2xl min-h-[1123px] max-w-[794px] mx-auto p-[40px] md:p-[50px]";
+
   return (
-    <div className="w-full h-full bg-white shadow-2xl print:shadow-none min-h-[1123px] max-w-[794px] mx-auto p-[40px] md:p-[50px] text-slate-800 print:w-full print:max-w-none">
+    <div className={`${containerClasses} text-slate-800`}>
       
       {/* Header */}
       <header className="border-b-2 pb-6 mb-6 flex justify-between items-start gap-6" style={{ borderColor: themeColor }}>
