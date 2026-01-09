@@ -104,10 +104,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans print:bg-white">
       
       {/* Navbar - Hidden on print */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 no-print">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-200">
@@ -139,11 +139,12 @@ function App() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content - Hidden on print */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Editor Column - Hidden on Print, Hidden on Mobile if preview active */}
-          <div className={`lg:col-span-5 space-y-8 no-print ${activeTab === 'preview' ? 'hidden lg:block' : ''}`}>
+          {/* Editor Column */}
+          <div className={`lg:col-span-5 space-y-8 ${activeTab === 'preview' ? 'hidden lg:block' : ''}`}>
             
             {/* Template Selector */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
@@ -249,11 +250,11 @@ function App() {
                 </div>
                 
                 {/* Visual wrapper for the paper effect */}
-                <div className="print-only">
+                <div>
                     <CVPreview data={data} template={template} />
                 </div>
                 
-                <div className="mt-8 text-center text-xs text-slate-400 no-print">
+                <div className="mt-8 text-center text-xs text-slate-400">
                    <p>Tip: Use Chrome's "Save as PDF" option in the print dialog for best results.</p>
                 </div>
              </div>
@@ -261,6 +262,12 @@ function App() {
 
         </div>
       </main>
+
+      {/* DEDICATED PRINT VIEW */}
+      {/* This is the only thing visible during print. It bypasses all grid/responsive logic */}
+      <div className="hidden print:block print:w-full">
+         <CVPreview data={data} template={template} />
+      </div>
 
       <Modal 
         isOpen={isDownloadModalOpen} 
