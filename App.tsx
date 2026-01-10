@@ -7,8 +7,9 @@ import { LanguageSection } from './components/Editor/LanguageSection';
 import { CustomSectionEditor } from './components/Editor/CustomSectionEditor';
 import { CVPreview } from './components/Preview/CVPreview';
 import { Button } from './components/ui/Button';
-import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, Palette, Download, Heart } from 'lucide-react';
+import { Printer, Layout, Sparkles, Trash2, FileText, Columns, Clock, Palette, Download, Heart, Undo2, Redo2 } from 'lucide-react';
 import { Input } from './components/ui/Input';
+import { useHistoryState } from './hooks/useHistoryState';
 
 const INITIAL_DATA: CVData = {
   profile: {
@@ -78,7 +79,16 @@ const THEME_COLORS = [
 ];
 
 function App() {
-  const [data, setData] = useState<CVData>(INITIAL_DATA);
+  // Use custom history hook instead of standard useState
+  const { 
+    state: data, 
+    set: setData, 
+    undo, 
+    redo, 
+    canUndo, 
+    canRedo 
+  } = useHistoryState<CVData>(INITIAL_DATA);
+
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   const [template, setTemplate] = useState<'modern' | 'sidebar' | 'classic'>('modern');
   const [newSkill, setNewSkill] = useState('');
@@ -117,19 +127,19 @@ function App() {
 
   const addSkill = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && newSkill.trim()) {
-      setData(prev => ({
-        ...prev,
-        skills: [...prev.skills, { id: crypto.randomUUID(), name: newSkill.trim(), level: 3 }]
-      }));
+      setData({
+        ...data,
+        skills: [...data.skills, { id: crypto.randomUUID(), name: newSkill.trim(), level: 3 }]
+      });
       setNewSkill('');
     }
   };
 
   const removeSkill = (id: string) => {
-    setData(prev => ({
-      ...prev,
-      skills: prev.skills.filter(s => s.id !== id)
-    }));
+    setData({
+      ...data,
+      skills: data.skills.filter(s => s.id !== id)
+    });
   };
 
   return (
@@ -160,6 +170,27 @@ function App() {
                   Preview
                 </button>
              </div>
+
+            {/* Undo/Redo Controls */}
+            <div className="hidden sm:flex items-center bg-slate-100 rounded-lg p-1 gap-1 mr-2">
+              <button 
+                onClick={undo}
+                disabled={!canUndo}
+                className="p-2 rounded-md text-slate-600 hover:bg-white hover:text-indigo-600 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-600 transition-all"
+                title="Undo"
+              >
+                <Undo2 className="w-4 h-4" />
+              </button>
+              <div className="w-px h-4 bg-slate-300 mx-1"></div>
+              <button 
+                onClick={redo}
+                disabled={!canRedo}
+                className="p-2 rounded-md text-slate-600 hover:bg-white hover:text-indigo-600 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-600 transition-all"
+                title="Redo"
+              >
+                <Redo2 className="w-4 h-4" />
+              </button>
+            </div>
 
             <Button 
               onClick={generatePDF} 
@@ -223,7 +254,7 @@ function App() {
                 {THEME_COLORS.map((color) => (
                    <button
                      key={color.value}
-                     onClick={() => setData(prev => ({ ...prev, themeColor: color.value }))}
+                     onClick={() => setData({ ...data, themeColor: color.value })}
                      className={`w-8 h-8 rounded-full border-2 transition-all ${data.themeColor === color.value ? 'border-slate-800 scale-110' : 'border-transparent hover:scale-110'}`}
                      style={{ backgroundColor: color.value }}
                      title={color.name}
@@ -233,7 +264,7 @@ function App() {
                     <input 
                         type="color"
                         value={data.themeColor}
-                        onChange={(e) => setData(prev => ({ ...prev, themeColor: e.target.value }))}
+                        onChange={(e) => setData({ ...data, themeColor: e.target.value })}
                         className="absolute inset-0 w-8 h-8 opacity-0 cursor-pointer z-10"
                     />
                     <div className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center bg-white hover:bg-slate-50 transition-all group-hover:scale-110" style={{ background: `conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)` }}>
@@ -254,27 +285,27 @@ function App() {
 
             <ProfileSection 
               data={data.profile} 
-              onChange={(profile) => setData(prev => ({ ...prev, profile }))} 
+              onChange={(profile) => setData({ ...data, profile })} 
             />
             
             <ExperienceSection 
               items={data.experience} 
-              onChange={(experience) => setData(prev => ({ ...prev, experience }))} 
+              onChange={(experience) => setData({ ...data, experience })} 
             />
 
             <EducationSection 
               items={data.education} 
-              onChange={(education) => setData(prev => ({ ...prev, education }))} 
+              onChange={(education) => setData({ ...data, education })} 
             />
 
             <LanguageSection 
               items={data.languages} 
-              onChange={(languages) => setData(prev => ({ ...prev, languages }))} 
+              onChange={(languages) => setData({ ...data, languages })} 
             />
 
             <CustomSectionEditor 
               items={data.custom}
-              onChange={(custom) => setData(prev => ({ ...prev, custom }))}
+              onChange={(custom) => setData({ ...data, custom })}
             />
 
             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
@@ -310,6 +341,14 @@ function App() {
              <div className="sticky top-24">
                 <div className="mb-4 flex justify-between items-center lg:hidden">
                    <h2 className="font-bold text-slate-500 uppercase text-xs tracking-wider">Live Preview</h2>
+                   <div className="flex sm:hidden items-center bg-slate-100 rounded-lg p-1 gap-1">
+                      <button onClick={undo} disabled={!canUndo} className="p-1.5 text-slate-600 disabled:opacity-40">
+                         <Undo2 className="w-4 h-4" />
+                      </button>
+                      <button onClick={redo} disabled={!canRedo} className="p-1.5 text-slate-600 disabled:opacity-40">
+                         <Redo2 className="w-4 h-4" />
+                      </button>
+                   </div>
                 </div>
                 
                 {/* Visual wrapper for the paper effect */}
